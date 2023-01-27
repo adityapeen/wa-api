@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            WhatsApp API
+        </title>
+    </head>
+    <body>
+        <div id="app">
+            <h2>WhatsApp API</h2>
+            <img src="" alt="QR Code" id="qrcode">
+            <h3>Logs:</h3>
+            <ul class="logs"></ul>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js" integrity="sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            $(document).ready(function(){
+                var socket = io.connect('http://localhost:8000', { path: '/socket.io'});
+
+                socket.on('message', function(msg){
+                    console.log(msg);
+                    $('.logs').append($('<li>').text(msg));
+                });
+
+                socket.on('qr', function(src){
+                    $('#qrcode').attr('src', src);
+                });
+            });
+        </script>
+    </body>
+</html>
