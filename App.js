@@ -2,6 +2,7 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const socketIO = require('socket.io');
+const qrcode_t = require('qrcode-terminal');
 const qrcode = require('qrcode');
 const http = require('http');
 const fs = require('fs');
@@ -21,6 +22,7 @@ app.get('/', (req, res)=> {
 
 const client = new Client({
     authStrategy: new LocalAuth(),
+    restartOnAuthFail: true,
     puppeteer: { 
         args: [
             '--no-sandbox',
@@ -33,7 +35,8 @@ const client = new Client({
             '--disable-gpu'
           ],
         headless: true 
-    }
+    },
+    printQRInTerminal: true,
 });
 
 
@@ -57,6 +60,11 @@ client.on('auth_failure', msg => {
 });
 
 client.on('message', msg => {
+    const contact = await msg.getContact();
+    const contactName = `+${contact.id.user + (contact.id.user.length < 15 ? ' '.repeat(15-contact.id.user.length) : '')} | ${(contact.shortName ?? (contact.name ?? (contact.pushname ?? 'Undefined')))}`;
+
+    console.log(`[${datetime()}] [message] [${msg.isStatus ? 'status ' : 'private'}] ${contactName} ~> ${originalMessageBody}`);
+
     if (msg.body == '!ping') {
         console.log(msg.body);
         msg.reply('pong cuk');
@@ -76,6 +84,9 @@ io.on('connection', function(socket){
     client.on('qr', (qr) => {
         // Generate and scan this code with your phone
         console.log('QR RECEIVED', qr);
+        qrcode_t.generate(qr, {
+            small: true
+        });
         qrcode.toDataURL(qr, (err, url)=>{
             socket.emit('qr', url);
             socket.emit('message', 'QR Code Received');
