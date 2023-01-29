@@ -13,6 +13,13 @@ const app =  express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+const datetime = () => {
+    return new Date().toLocaleString('en-ZA', {
+        timeZone: 'Asia/Jakarta',
+        hour12: false
+    }).replace(',', '');
+}
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
