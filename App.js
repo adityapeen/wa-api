@@ -70,7 +70,7 @@ client.on('message', async (msg) => {
     const contact = await msg.getContact();
     const contactName = `+${contact.id.user + (contact.id.user.length < 15 ? ' '.repeat(15-contact.id.user.length) : '')} | ${(contact.shortName ?? (contact.name ?? (contact.pushname ?? 'Undefined')))}`;
 
-    console.log(`[${datetime()}] [message] [${msg.isStatus ? 'status ' : 'private'}] ${contactName} ~> ${originalMessageBody}`);
+    console.log(`[${datetime()}] [message] [${msg.isStatus ? 'status ' : 'private'}] ${contactName} ~> ${msg.body}`);
 
     if (msg.body == '!ping') {
         console.log(msg.body);
