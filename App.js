@@ -3,6 +3,7 @@ const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const socketIO = require('socket.io');
+const qrcode_t = require('qrcode-terminal');
 const qrcode = require('qrcode');
 const http = require('http');
 const fileUpload = require('express-fileupload');
@@ -33,6 +34,7 @@ app.get('/', (req, res)=> {
 
 const client = new Client({
     authStrategy: new LocalAuth(),
+    restartOnAuthFail: true,
     puppeteer: { 
         args: [
             '--no-sandbox',
@@ -45,7 +47,8 @@ const client = new Client({
             '--disable-gpu'
           ],
         headless: true 
-    }
+    },
+    printQRInTerminal: true,
 });
 
 
@@ -100,6 +103,9 @@ io.on('connection', function(socket){
     client.on('qr', (qr) => {
         // Generate and scan this code with your phone
         console.log('QR RECEIVED', qr);
+        qrcode_t.generate(qr, {
+            small: true
+        });
         qrcode.toDataURL(qr, (err, url)=>{
             socket.emit('qr', url);
             socket.emit('message', 'QR Code Received');
