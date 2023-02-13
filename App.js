@@ -1,27 +1,32 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
+require('dotenv').config();
+const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const socketIO = require('socket.io');
 const qrcode_t = require('qrcode-terminal');
 const qrcode = require('qrcode');
 const http = require('http');
+const fileUpload = require('express-fileupload');
+const port = parseInt(process.env.PORT, 10) | 5000
 const fs = require('fs');
-const port = process.env.PORT | 8000;
 const { phoneNumberFormatter } = require('./helpers/formatter');
 
 const app =  express();
 const server = http.createServer(app);
 const io = socketIO(server);
-
-const datetime = () => {
-    return new Date().toLocaleString('en-ZA', {
-        timeZone: 'Asia/Jakarta',
-        hour12: false
-    }).replace(',', '');
-}
+const token = `Basic ${Buffer.from(`${process.env.API_USER}:${process.env.API_PASSWORD}`, "utf8").toString("base64")}`;
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(fileUpload({
+    debug:true
+}));
+
+console.log([
+    "port : "+ process.env.PORT,
+    "user : "+ process.env.API_USER,
+    'password : '+ process.env.API_PASSWORD
+])
 
 app.get('/', (req, res)=> {
     res.sendFile('index.html', {root: __dirname});
@@ -57,6 +62,13 @@ const client = new Client({
 //     });
 // });
 
+const datetime = () => {
+    return new Date().toLocaleString('en-ZA', {
+        timeZone: 'Asia/Jakarta',
+        hour12: false
+    }).replace(',', '');
+}
+
 client.on('authenticated', () => {
     console.log('AUTHENTICATED');
 });
@@ -66,7 +78,7 @@ client.on('auth_failure', msg => {
     console.error('AUTHENTICATION FAILURE', msg);
 });
 
-client.on('message', async (msg) => {
+client.on('message', async msg => {
     const contact = await msg.getContact();
     const contactName = `+${contact.id.user + (contact.id.user.length < 15 ? ' '.repeat(15-contact.id.user.length) : '')} | ${(contact.shortName ?? (contact.name ?? (contact.pushname ?? 'Undefined')))}`;
 
@@ -117,6 +129,15 @@ app.post('/send-message', [
     body('number').notEmpty(),
     body('message').notEmpty(),
 ], async (req,res)=>{
+    const reqHeader = req.get('Authorization');
+
+    if(reqHeader != token){
+        return res.status(403).json({
+            status : false,
+            message : 'Not Authorized'
+        })
+    }
+    
     const errors = validationResult(req).formatWith(({ msg })=>{
         return msg;
     });
@@ -129,8 +150,8 @@ app.post('/send-message', [
     }
 
     const number = phoneNumberFormatter(req.body.number);
-    const message = req.body.message;
-
+    const msg = req.body.message;
+    
     const isRegistered =  await checkRegisteredNumber(number);
 
     if(!isRegistered) {
@@ -139,17 +160,36 @@ app.post('/send-message', [
             message : 'The number is not registered'
         })
     }
-    client.sendMessage(number, message).then(response => {
-        res.status(200).json({
-            status : true,
-            response : response
-        })
-    }).catch(err => {
-        res.status(500).json({
-            status : true,
-            response : err
+
+    if(req.files){       
+        const file =  req.files.file;
+        const media = new MessageMedia(file.mimetype, file.data.toString('base64'), file.name);
+    
+        client.sendMessage(number, media, {caption : msg, sendMediaAsDocument:true }).then(response => {
+            res.status(200).json({
+                status : true,
+                response : response
+            });
+        }).catch(err => {
+            res.status(500).json({
+                status : false,
+                response : err
+            });
         });
-    });
+    } else {
+        client.sendMessage(number, msg ).then(response => {
+            res.status(200).json({
+                status : true,
+                response : response
+            });
+        }).catch(err => {
+            res.status(500).json({
+                status : false,
+                response : err
+            });
+        });
+    }
+
 })
 
 server.listen(port, function(){
