@@ -19,7 +19,7 @@ const token = `Basic ${Buffer.from(`${process.env.API_USER}:${process.env.API_PA
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(fileUpload({
-    debug:true
+    debug:false
 }));
 
 console.log([
@@ -79,10 +79,10 @@ client.on('auth_failure', msg => {
 });
 
 client.on('message', async msg => {
-    const contact = await msg.getContact();
-    const contactName = `+${contact.id.user + (contact.id.user.length < 15 ? ' '.repeat(15-contact.id.user.length) : '')} | ${(contact.shortName ?? (contact.name ?? (contact.pushname ?? 'Undefined')))}`;
+    // const contact = await msg.getContact();
+    // const contactName = `+${contact.id.user + (contact.id.user.length < 15 ? ' '.repeat(15-contact.id.user.length) : '')} | ${(contact.shortName ?? (contact.name ?? (contact.pushname ?? 'Undefined')))}`;
 
-    console.log(`[${datetime()}] [message] [${msg.isStatus ? 'status ' : 'private'}] ${contactName} ~> ${msg.body}`);
+    // console.log(`[${datetime()}] [message] [${msg.isStatus ? 'status ' : 'private'}] ${contactName} ~> ${msg.body}`);
 
     if (msg.body == '!ping') {
         console.log(msg.body);
@@ -191,6 +191,17 @@ app.post('/send-message', [
     }
 
 })
+
+app.post('/check', (req, res)=> {
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Max-Age", "1800");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
+    return res.status(200).json({
+        status : true,
+        message : 'API is Online'
+    })
+});
 
 server.listen(port, function(){
     console.log('App running on *:' + port );
