@@ -14,6 +14,7 @@ const { phoneNumberFormatter } = require('./helpers/formatter');
 const app =  express();
 const server = http.createServer(app);
 const io = socketIO(server);
+const axios = require('axios');
 const token = `Basic ${Buffer.from(`${process.env.API_USER}:${process.env.API_PASSWORD}`, "utf8").toString("base64")}`;
 
 app.use(express.json());
@@ -124,6 +125,32 @@ const checkRegisteredNumber = async function (number) {
     return isRegistered;
 };
 
+// Callback APP
+const sendCallbackApp = async function (identifier){
+    var id = identifier.split(';');
+
+    var url = `${process.env.APP_URL}/${id[1]}/${id[0]}`;
+
+    try {
+
+    const apiResponse = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+    });
+
+    if(apiResponse.status == 200){
+        return true;
+    }
+    else {
+        return false;
+    }
+  } catch (error) {
+    return false
+  }
+}
+
 //Send Message
 app.post('/send-message', [
     body('number').notEmpty(),
@@ -166,6 +193,7 @@ app.post('/send-message', [
         const media = new MessageMedia(file.mimetype, file.data.toString('base64'), file.name);
     
         client.sendMessage(number, media, {caption : msg, sendMediaAsDocument:true }).then(response => {
+            sendCallbackApp(req.body.id);
             res.status(200).json({
                 status : true,
                 response : response
@@ -178,6 +206,7 @@ app.post('/send-message', [
         });
     } else {
         client.sendMessage(number, msg ).then(response => {
+            sendCallbackApp(req.body.id);
             res.status(200).json({
                 status : true,
                 response : response
