@@ -126,29 +126,29 @@ const checkRegisteredNumber = async function (number) {
 };
 
 // Callback APP
-const sendCallbackApp = async function (identifier){
-    var id = identifier.split(';');
+const sendCallbackApp = async function (identifier = null){
+    if(identifier == null) return false;
 
+    var id = identifier.split(';');
     var url = `${process.env.APP_URL}/${id[1]}/${id[0]}`;
 
     try {
+        const apiResponse = await axios.get(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+        });
 
-    const apiResponse = await axios.get(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token
-      },
-    });
-
-    if(apiResponse.status == 200){
-        return true;
+        if(apiResponse.status == 200){
+            return true;
+        }
+        else {
+            return false;
+        }
+    } catch (error) {
+        return false
     }
-    else {
-        return false;
-    }
-  } catch (error) {
-    return false
-  }
 }
 
 //Send Message
