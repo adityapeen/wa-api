@@ -33,15 +33,11 @@ app.get('/', (req, res)=> {
     res.sendFile('index.html', {root: __dirname});
 });
 
+const wwebVersion = '2.412.54';
+
 const client = new Client({
     authStrategy: new LocalAuth(),
-    webVersionCache:
-    {
-        // remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2411.2.html',
-        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
-        type: 'remote' 
-    },
-    restartOnAuthFail: true,
+    // restartOnAuthFail: true,
     puppeteer: { 
         args: [
             '--no-sandbox',
@@ -52,8 +48,13 @@ const client = new Client({
             '--no-zygote',
             '--single-process', // <- this one doesn't works in Windows
             '--disable-gpu'
-          ],
+        ],
         headless: true 
+    },
+    webVersionCache:
+    {
+        type: 'remote', 
+        remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
     },
     printQRInTerminal: true,
 });
