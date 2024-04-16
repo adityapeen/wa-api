@@ -23,21 +23,15 @@ app.use(fileUpload({
     debug:false
 }));
 
-console.log([
-    "port : "+ process.env.PORT,
-    "user : "+ process.env.API_USER,
-    'password : '+ process.env.API_PASSWORD
-])
-
 app.get('/', (req, res)=> {
     res.sendFile('index.html', {root: __dirname});
 });
 
-const wwebVersion = '2.412.54';
+const wwebVersion = '2.2412.54';
 
 const client = new Client({
     authStrategy: new LocalAuth(),
-    // restartOnAuthFail: true,
+    restartOnAuthFail: true,
     puppeteer: { 
         args: [
             '--no-sandbox',
@@ -49,7 +43,7 @@ const client = new Client({
             '--single-process', // <- this one doesn't works in Windows
             '--disable-gpu'
         ],
-        headless: true 
+        headless: false 
     },
     webVersionCache:
     {
@@ -240,5 +234,10 @@ app.post('/check', (req, res)=> {
 });
 
 server.listen(port, function(){
-    console.log('App running on *:' + port );
+    console.log([
+        "App Running port : "+ process.env.PORT,
+        "user : "+ process.env.API_USER,
+        'password : '+ process.env.API_PASSWORD
+    ])
+    
 })
