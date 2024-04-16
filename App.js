@@ -37,7 +37,8 @@ const client = new Client({
     authStrategy: new LocalAuth(),
     webVersionCache:
     {
-        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2411.2.html',
+        // remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2411.2.html',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
         type: 'remote' 
     },
     restartOnAuthFail: true,
