@@ -11,6 +11,9 @@ const port = parseInt(process.env.PORT, 10) | 5000
 const fs = require('fs');
 const { phoneNumberFormatter } = require('./helpers/formatter');
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
 const app =  express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -43,7 +46,7 @@ const client = new Client({
             '--single-process', // <- this one doesn't works in Windows
             '--disable-gpu'
         ],
-        headless: false 
+        headless: true 
     },
     webVersionCache:
     {
@@ -71,6 +74,45 @@ const datetime = () => {
     }).replace(',', '');
 }
 
+const checkTag = (sentence) => {
+    var regex = /^(?:[^.!?]*[.!?]+\s*)?(?:\.ask[.!?]?\s+)/i;
+    // Test if the string matches the pattern
+    return regex.test(sentence);
+}
+
+const cleanPrompt = (sentence) => {
+    // Regular expression to match ".ask" at the beginning of the sentence
+    var regex = /^\s*\.ask[.!?]?\s*/i;
+
+    // Replace ".ask" with an empty string
+    return sentence.replace(regex, '');
+}
+
+async function getResponse(sentence) {
+    const generationConfig = {
+        // stopSequences: ["cuk"],
+        // maxOutputTokens: 200,
+        temperature: 0.9,
+        topP: 0.1,
+        topK: 16,
+      }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-pro", generationConfig});
+  
+    const prompt = cleanPrompt(sentence);
+  
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    var text = "";
+
+    try {
+        text = response.text();
+    } catch (error) {
+        text = "Mohon maaf, sepertinya terdapat kata-kata yang melanggar Community Standards"
+    }
+    return replacedText = text.replace(/\*\*/g, "*");
+}
+
 client.on('authenticated', () => {
     console.log('AUTHENTICATED');
 });
@@ -88,7 +130,11 @@ client.on('message', async msg => {
 
     if (msg.body == '!ping') {
         console.log(msg.body);
-        msg.reply('pong cuk');
+        msg.reply('pong');
+    }
+    else if(checkTag(msg.body)){
+        var message = await getResponse(msg.body);
+        msg.reply(message);
     }
 });
 
@@ -235,7 +281,8 @@ app.post('/check', (req, res)=> {
 
 server.listen(port, function(){
     console.log([
-        "App Running port : "+ process.env.PORT,
+        "App Running",
+        "port : "+ process.env.PORT,
         "user : "+ process.env.API_USER,
         'password : '+ process.env.API_PASSWORD
     ])
