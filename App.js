@@ -48,11 +48,11 @@ const client = new Client({
         ],
         headless: true 
     },
-    // webVersionCache:
-    // {
-    //     type: 'remote', 
-    //     remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
-    // },
+    webVersionCache:
+    {
+        type: 'remote', 
+        remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
+    },
     printQRInTerminal: true,
 });
 
