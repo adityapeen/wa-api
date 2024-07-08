@@ -9,7 +9,7 @@ const http = require('http');
 const fileUpload = require('express-fileupload');
 const port = parseInt(process.env.PORT, 10) | 5000
 const fs = require('fs');
-const { phoneNumberFormatter } = require('./helpers/formatter');
+const { phoneNumberFormatter, clientIdDeformatter } = require('./helpers/formatter');
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -132,6 +132,10 @@ client.on('message', async msg => {
         console.log(msg.body);
         msg.reply('pong');
     }
+    else if(msg.body.toLowerCase() == '.username') {
+        var message = await getUserData(clientIdDeformatter(msg.from));
+        msg.reply(message);
+    }
     else if(checkTag(msg.body)){
         var message = await getResponse(msg.body);
         msg.reply(message);
@@ -172,12 +176,38 @@ const checkRegisteredNumber = async function (number) {
     return isRegistered;
 };
 
+// get User Data
+const getUserData = async function (number = null){
+    if(number == null) return false;
+
+    var url = `${process.env.APP_URL}/user_profile/${number}`;
+
+    try {
+        const apiResponse = await axios.get(url,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+        });
+
+        if(apiResponse.status == 200){
+            return apiResponse.data.message;
+        }
+        else {
+            return "Can't get User Data";
+        }
+    } catch (error) {
+        return "Oops!! There's an error";
+    }
+}
+
 // Callback APP
 const sendCallbackApp = async function (identifier = null){
     if(identifier == null) return false;
 
     var id = identifier.split(';');
-    var url = `${process.env.APP_URL}/${id[1]}/${id[0]}`;
+    var url = `${process.env.APP_URL}/mom_status/${id[1]}/${id[0]}`;
 
     try {
         const apiResponse = await axios.get(url, {

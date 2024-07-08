@@ -13,6 +13,14 @@ const phoneNumberFormatter = function(number){
     return formatted;
 }
 
+const clientIdDeformatter = function(str){
+    // Remove '62' and '@c.us'
+    let modifiedStr = str.replace('62', '').replace('@c.us', '');
+    // Add '0' at the beginning
+    modifiedStr = '0' + modifiedStr;
+    return btoa(modifiedStr); //Return number in base64 format
+}
+
 module.exports = {
-    phoneNumberFormatter
+    phoneNumberFormatter, clientIdDeformatter
 }
