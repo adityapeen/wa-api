@@ -228,6 +228,32 @@ const sendCallbackApp = async function (identifier = null){
     }
 }
 
+// Delete Message
+async function deleteMessage(phoneNumber, messageId) {
+    const chatId = phoneNumberFormatter(phoneNumber); // For individual chat
+    // const chatId = `${phoneNumber}@g.us`; // Uncomment this for group chat
+
+    try {
+        const chat = await client.getChatById(chatId);
+        const messages = await chat.fetchMessages({
+            limit:10,
+            fromMe: true
+        });
+        const message = messages.filter(el => el.id._serialized == messageId);
+
+        if (message.length == 1) {
+            await message[0].delete(true); // true indicates that the message will be deleted for everyone
+            // console.log(`Message with ID ${messageId} deleted successfully`);
+            return true;
+        } else {
+            // console.log(`Message with ID ${messageId} not found`);
+            return false;
+        }
+    } catch (error) {
+        console.error('Failed to delete messages:', error);
+    }
+}
+
 //Send Message
 app.post('/send-message', [
     body('number').notEmpty(),
@@ -295,8 +321,55 @@ app.post('/send-message', [
             });
         });
     }
-
 })
+
+app.post('/delete-message', [
+    body('number').notEmpty(),
+    body('messageId').notEmpty(),
+], async (req, res) => {
+
+    const reqHeader = req.get('Authorization');
+    if(reqHeader != token){
+        return res.status(403).json({
+            status : false,
+            message : 'Not Authorized'
+        })
+    }
+    
+    const errors = validationResult(req).formatWith(({ msg })=>{
+        return msg;
+    });
+    if(!errors.isEmpty()){
+        return res.status(422).json({
+            status : false,
+            message : errors.mapped()
+        })
+    }
+
+    const { number, messageId } = req.body
+
+    try {
+        del = await deleteMessage(number, messageId);
+        stat, msg;
+        if(del){
+            stat = true,
+            msg = 'Pesan telah berhasil dihapus'
+        }
+        else{
+            stat = false
+            msg = 'Pesan tidak ditemukan'
+        }
+        res.status(200).json({
+            status : stat,
+            message : msg
+        });
+    } catch (error) {
+        res.status(500).json({
+            status : false,
+            message : 'Gagal menghapus pesan'
+        });
+    }
+});
 
 app.post('/check', (req, res)=> {
     res.setHeader("Access-Control-Allow-Origin", "*")
@@ -316,5 +389,4 @@ server.listen(port, function(){
         "user : "+ process.env.API_USER,
         'password : '+ process.env.API_PASSWORD
     ])
-    
 })
