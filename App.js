@@ -11,8 +11,8 @@ const port = parseInt(process.env.PORT, 10) | 5000
 const fs = require('fs');
 const { phoneNumberFormatter, clientIdDeformatter } = require('./helpers/formatter');
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+const { GoogleGenAI  } = require("@google/genai");
+const genAI = new GoogleGenAI({apiKey: process.env.API_KEY});
 
 const app =  express();
 const server = http.createServer(app);
@@ -89,26 +89,24 @@ const cleanPrompt = (sentence) => {
 }
 
 async function getResponse(sentence) {
-    const generationConfig = {
-        // stopSequences: ["cuk"],
-        // maxOutputTokens: 200,
-        temperature: 0.9,
-        topP: 0.1,
-        topK: 16,
-      }
-
-    const model = genAI.getGenerativeModel({ model: "gemini-pro", generationConfig});
   
     const prompt = cleanPrompt(sentence);
   
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
+    const result = await genAI.models.generateContent({
+        model : 'gemini-2.0-flash',
+        contents: prompt,
+        config: {
+            systemInstruction: "Gunakan bahasa singkat",
+        },
+    });
+
     var text = "";
 
     try {
-        text = response.text();
+        text = result.text;
     } catch (error) {
         text = "Mohon maaf, sepertinya terdapat kata-kata yang melanggar Community Standards"
+        console.log(error)
     }
     return replacedText = text.replace(/\*\*/g, "*");
 }
