@@ -14,6 +14,9 @@ const { phoneNumberFormatter, clientIdDeformatter } = require('./helpers/formatt
 const { GoogleGenAI  } = require("@google/genai");
 const genAI = new GoogleGenAI({apiKey: process.env.API_KEY});
 
+const logger = require('./utils/logger');
+const httpLogger = require('./utils/httpLogger')
+
 const app =  express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -25,6 +28,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(fileUpload({
     debug:false
 }));
+app.use(httpLogger);
 
 app.get('/', (req, res)=> {
     res.sendFile('index.html', {root: __dirname});
@@ -106,17 +110,20 @@ async function getResponse(sentence) {
         text = result.text;
     } catch (error) {
         text = "Mohon maaf, sepertinya terdapat kata-kata yang melanggar Community Standards"
-        console.log(error)
+        // console.log(error)
+        logger.error(error)
     }
     return replacedText = text.replace(/\*\*/g, "*");
 }
 
 client.on('authenticated', () => {
+    logger.info('AUTHENTICATED');
     console.log('AUTHENTICATED');
 });
 
 client.on('auth_failure', msg => {
     // Fired if session restore was unsuccessful
+    logger.error('Client was logged out');
     console.error('AUTHENTICATION FAILURE', msg);
 });
 
@@ -141,6 +148,7 @@ client.on('message', async msg => {
 });
 
 client.on('disconnected', (reason) => {
+    logger.info('Client was logged out');
     console.log('Client was logged out', reason);
 });
 
@@ -152,6 +160,7 @@ io.on('connection', function(socket){
 
     client.on('qr', (qr) => {
         // Generate and scan this code with your phone
+        logger.info('QR RECEIVED');
         console.log('QR RECEIVED', qr);
         qrcode_t.generate(qr, {
             small: true
@@ -163,6 +172,7 @@ io.on('connection', function(socket){
     });
 
     client.on('ready', () => {
+        logger.info('Client is ready!');
         console.log('Client is ready!');
         socket.emit('message', 'Client is ready!');
     });
@@ -196,6 +206,7 @@ const getUserData = async function (number = null){
             return "Can't get User Data";
         }
     } catch (error) {
+        logger.error(error);
         return "Oops!! There's an error";
     }
 }
@@ -222,6 +233,7 @@ const sendCallbackApp = async function (identifier = null){
             return false;
         }
     } catch (error) {
+        logger.error(error);
         return false
     }
 }
@@ -248,7 +260,8 @@ async function deleteMessage(phoneNumber, messageId) {
             return false;
         }
     } catch (error) {
-        console.error('Failed to delete messages:', error);
+        logger.error('Failed to delete messages:', error);
+        // console.error('Failed to delete messages:', error);
     }
 }
 
@@ -271,6 +284,7 @@ app.post('/send-message', [
     });
 
     if(!errors.isEmpty()){
+        logger.error(errors);
         return res.status(422).json({
             status : false,
             message : errors.mapped()
@@ -300,6 +314,7 @@ app.post('/send-message', [
                 response : response
             });
         }).catch(err => {
+            logger.error(err);
             res.status(500).json({
                 status : false,
                 response : err
@@ -313,6 +328,7 @@ app.post('/send-message', [
                 response : response
             });
         }).catch(err => {
+            logger.error(err);
             res.status(500).json({
                 status : false,
                 response : err
@@ -362,6 +378,7 @@ app.post('/delete-message', [
             message : msg
         });
     } catch (error) {
+        logger.error(error);
         res.status(500).json({
             status : false,
             message : 'Gagal menghapus pesan'

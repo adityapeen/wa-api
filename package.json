@@ -21,11 +21,14 @@
     "express-fileupload": "^1.4.0",
     "express-validator": "^6.14.3",
     "http": "^0.0.1-security",
+    "morgan": "^1.10.1",
     "nodemon": "^3.0.1",
     "puppeteer": "^22.6.5",
     "qrcode": "^1.5.1",
     "qrcode-terminal": "^0.12.0",
     "socket.io": "^4.5.4",
-    "whatsapp-web.js": "^1.33.0"
+    "whatsapp-web.js": "^1.34.4",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }
