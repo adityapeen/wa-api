@@ -1,13 +1,29 @@
 :root {
-    --primary: #25d366;
-    --primary-dark: #128c7e;
-    --text: #172b2f;
-    --muted: #667781;
-    --border: #e8edef;
-    --background: #f0f2f5;
+    --primary: #19c875;
+    --primary-dark: #0b9f68;
+
+    --text: #09283d;
+    --text-secondary: #527086;
+    --muted: #718697;
+
+    --border: #e1e9ed;
+
+    --background: #edf7f2;
+
     --card: #ffffff;
-    --log-bg: #f7f9fa;
+
+    --log-background: #f6f8f9;
+
+    --warning: #f1ad3d;
+    --warning-background: #fff6e6;
+
+    --success-background: #e7f9f0;
 }
+
+
+/* ==================================================
+   RESET
+================================================== */
 
 * {
     box-sizing: border-box;
@@ -15,8 +31,21 @@
     padding: 0;
 }
 
+
+/* ==================================================
+   PAGE
+================================================== */
+
+html,
 body {
-    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+
+body {
 
     font-family:
         -apple-system,
@@ -27,455 +56,778 @@ body {
         Arial,
         sans-serif;
 
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(37, 211, 102, 0.14),
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #eef7f2 0%,
-            #f5f7f8 50%,
-            #edf4f1 100%
-        );
-
     color: var(--text);
 
+    background:
+
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(25, 200, 117, .12),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(25, 200, 117, .10),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #edf8f3,
+            #f7faf9
+        );
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    padding: 30px 20px;
+    padding: 12px 18px;
 }
 
-/* =========================
+
+/* ==================================================
    APP
-========================= */
+================================================== */
 
 #app {
+
     width: 100%;
-    max-width: 980px;
-}
 
-/* =========================
-   HEADER
-========================= */
+    height: calc(100vh - 24px);
 
-.app-header {
-    text-align: center;
-    margin-bottom: 28px;
-}
-
-.brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.brand-icon {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 50%;
-
-    background: var(--primary);
+    max-width: 1450px;
 
     display: flex;
-    align-items: center;
-    justify-content: center;
 
-    color: white;
-    font-size: 25px;
+    flex-direction: column;
 
-    box-shadow:
-        0 8px 20px rgba(37, 211, 102, 0.22);
 }
 
-.brand-text {
-    text-align: left;
-}
 
-.brand-text h1 {
-    font-size: 23px;
-    font-weight: 700;
-    line-height: 1.1;
-}
-
-.brand-text p {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 4px;
-}
-
-/* =========================
-   CARD
-========================= */
+/* ==================================================
+   MAIN CARD
+================================================== */
 
 .auth-card {
+
+    flex: 1;
+
+    min-height: 0;
+
     background: var(--card);
 
-    border-radius: 20px;
-
-    box-shadow:
-        0 20px 60px rgba(20, 40, 30, 0.10),
-        0 4px 12px rgba(20, 40, 30, 0.04);
+    border-radius: 24px;
 
     overflow: hidden;
 
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns:
+        minmax(480px, 1fr)
+        minmax(480px, 1fr);
+
+    box-shadow:
+        0 20px 60px rgba(19, 53, 39, .10);
 }
 
-/* =========================
-   QR SECTION
-========================= */
 
-.qr-section {
-    padding: 45px;
+/* ==================================================
+   LEFT AUTHENTICATION
+================================================== */
+
+.authentication-section {
+
+    min-width: 0;
+
+    min-height: 0;
 
     display: flex;
-    flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
     border-right: 1px solid var(--border);
+
+    padding: 35px 50px;
+
 }
+
+
+.authentication-content {
+
+    width: 100%;
+
+    max-width: 560px;
+
+    text-align: center;
+
+}
+
+
+/* ==================================================
+   TITLE
+================================================== */
 
 .section-label {
+
     color: var(--primary-dark);
 
-    font-size: 12px;
+    font-size: 13px;
+
     font-weight: 700;
+
+    letter-spacing: 1.5px;
 
     text-transform: uppercase;
-    letter-spacing: 1.2px;
 
-    margin-bottom: 8px;
+    margin-bottom: 14px;
 }
 
-.qr-section h2 {
-    font-size: 25px;
+
+.authentication-content h1 {
+
+    font-size: clamp(28px, 2.4vw, 36px);
+
+    line-height: 1.15;
+
     font-weight: 700;
 
-    margin-bottom: 8px;
-
-    text-align: center;
+    margin-bottom: 12px;
 }
 
-.qr-description {
-    color: var(--muted);
 
-    font-size: 14px;
-    line-height: 1.6;
+.description {
 
-    text-align: center;
+    max-width: 500px;
 
-    max-width: 330px;
+    margin: 0 auto 28px;
 
-    margin-bottom: 25px;
+    color: var(--text-secondary);
+
+    font-size: 16px;
+
+    line-height: 1.55;
 }
 
-/* =========================
-   QR CONTAINER
-========================= */
+
+/* ==================================================
+   QR
+================================================== */
 
 .qr-wrapper {
-    width: 280px;
-    height: 280px;
 
-    background: white;
+    width: min(370px, 70vh);
+
+    aspect-ratio: 1 / 1;
+
+    margin: 0 auto;
+
+    padding: 25px;
+
+    background: #fff;
 
     border: 1px solid var(--border);
 
-    border-radius: 16px;
-
-    padding: 15px;
+    border-radius: 18px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    position: relative;
-
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.05);
+        0 12px 35px rgba(0, 0, 0, .06);
+
 }
 
+
 #qrcode {
+
     width: 100%;
+
     height: 100%;
 
     object-fit: contain;
 
     image-rendering: pixelated;
-
-    border-radius: 8px;
 }
+
+
+/* ==================================================
+   QR STATUS
+================================================== */
 
 .qr-status {
+
+    margin-top: 20px;
+
     display: flex;
+
     align-items: center;
-    gap: 7px;
 
-    margin-top: 18px;
+    justify-content: center;
 
-    color: var(--muted);
+    gap: 9px;
 
-    font-size: 13px;
+    color: var(--text-secondary);
+
+    font-size: 14px;
 }
+
 
 .status-dot {
-    width: 8px;
-    height: 8px;
+
+    width: 10px;
+
+    height: 10px;
 
     border-radius: 50%;
 
-    background: #f0ad4e;
+    background: var(--warning);
 
-    animation: pulse 1.5s infinite;
+    box-shadow:
+        0 0 0 4px rgba(241, 173, 61, .12);
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0.4);
-    }
 
-    70% {
-        box-shadow: 0 0 0 8px rgba(240, 173, 78, 0);
-    }
+.qr-status.connected .status-dot {
 
-    100% {
-        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0);
-    }
+    background: var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(25, 200, 117, .12);
 }
 
-/* =========================
+
+/* ==================================================
    INSTRUCTIONS
-========================= */
+================================================== */
 
 .instructions {
-    width: 100%;
 
-    margin-top: 30px;
+    margin-top: 25px;
 
-    padding-top: 25px;
+    padding-top: 22px;
 
     border-top: 1px solid var(--border);
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
 }
 
-.instructions h3 {
-    font-size: 14px;
-    margin-bottom: 14px;
-}
 
-.step {
+.instruction {
+
     display: flex;
-    gap: 12px;
 
-    margin-bottom: 12px;
+    flex-direction: column;
 
-    color: var(--muted);
+    align-items: center;
 
-    font-size: 13px;
-    line-height: 1.5;
+    gap: 9px;
 }
 
-.step-number {
-    flex: 0 0 24px;
 
-    width: 24px;
-    height: 24px;
+.instruction-number {
+
+    width: 34px;
+
+    height: 34px;
 
     border-radius: 50%;
 
-    background: #e8f8ef;
+    background: #e5f8ef;
 
     color: var(--primary-dark);
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    font-size: 11px;
+    font-size: 13px;
+
     font-weight: 700;
 }
 
-/* =========================
-   LOG SECTION
-========================= */
 
-.log-section {
-    padding: 45px;
+.instruction-content {
 
     display: flex;
+
     flex-direction: column;
+
+    align-items: center;
+
+    gap: 7px;
 }
 
-.log-header {
+
+.instruction-icon {
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    color: var(--text);
+}
+
+
+.instruction p {
+
+    color: var(--text-secondary);
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    text-align: center;
+}
+
+
+.instruction strong {
+
+    color: var(--text);
+
+}
+
+
+/* ==================================================
+   RIGHT ACTIVITY
+================================================== */
+
+.activity-section {
+
+    min-width: 0;
+
+    min-height: 0;
+
+    padding: 50px 55px;
+
     display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* ==================================================
+   ACTIVITY HEADER
+================================================== */
+
+.activity-header {
+
+    flex: 0 0 auto;
+
+    display: flex;
+
     align-items: flex-start;
+
     justify-content: space-between;
 
-    margin-bottom: 22px;
+    gap: 20px;
+
+    margin-bottom: 28px;
 }
 
-.log-title h2 {
-    font-size: 20px;
-    margin-bottom: 5px;
+
+.activity-title h2 {
+
+    font-size: 27px;
+
+    line-height: 1.2;
+
+    margin-bottom: 7px;
 }
 
-.log-title p {
-    font-size: 13px;
-    color: var(--muted);
+
+.activity-title p {
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
 }
+
+
+/* ==================================================
+   CONNECTION BADGE
+================================================== */
 
 .connection-badge {
+
+    flex: 0 0 auto;
+
     display: inline-flex;
+
     align-items: center;
-    gap: 6px;
 
-    padding: 7px 11px;
+    gap: 8px;
 
-    border-radius: 20px;
+    padding: 9px 15px;
 
-    background: #fff7e6;
+    border-radius: 30px;
 
-    color: #a86b00;
+    background: var(--warning-background);
 
-    font-size: 11px;
+    color: #b67615;
+
+    font-size: 13px;
+
     font-weight: 600;
 }
 
-.connection-badge::before {
-    content: "";
 
-    width: 7px;
-    height: 7px;
+.badge-dot {
+
+    width: 8px;
+
+    height: 8px;
 
     border-radius: 50%;
 
-    background: #f0ad4e;
+    background: var(--warning);
 }
 
-/* =========================
-   LOG BOX
-========================= */
+
+.connection-badge.connecting {
+
+    background: #eef8f3;
+
+    color: var(--primary-dark);
+}
+
+
+.connection-badge.connecting .badge-dot {
+
+    background: var(--primary);
+
+    animation: pulse 1.5s infinite;
+}
+
+
+.connection-badge.connected {
+
+    background: var(--success-background);
+
+    color: var(--primary-dark);
+}
+
+
+.connection-badge.connected .badge-dot {
+
+    background: var(--primary);
+}
+
+
+/* ==================================================
+   LOG CONTAINER
+================================================== */
 
 .logs-container {
+
     flex: 1;
 
-    min-height: 330px;
+    min-height: 0;
 
-    background: var(--log-bg);
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding: 22px;
+
+    background: var(--log-background);
 
     border: 1px solid var(--border);
 
-    border-radius: 14px;
+    border-radius: 16px;
 
-    padding: 18px;
-
-    overflow-y: auto;
 }
 
+
+/* scrollbar */
+
+.logs-container::-webkit-scrollbar {
+
+    width: 7px;
+}
+
+
+.logs-container::-webkit-scrollbar-track {
+
+    background: transparent;
+}
+
+
+.logs-container::-webkit-scrollbar-thumb {
+
+    background: #cbd7dc;
+
+    border-radius: 10px;
+}
+
+
+.logs-container::-webkit-scrollbar-thumb:hover {
+
+    background: #aebdc3;
+}
+
+
+/* ==================================================
+   LOG LIST
+================================================== */
+
 .logs {
+
     list-style: none;
 
     display: flex;
+
     flex-direction: column;
 
     gap: 10px;
 }
 
-.logs li {
-    position: relative;
 
-    padding: 11px 13px 11px 31px;
+.logs li {
+
+    min-height: 50px;
+
+    padding: 0 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
 
     background: white;
 
-    border: 1px solid #edf0f1;
+    border: 1px solid #e7edef;
 
-    border-radius: 9px;
+    border-radius: 11px;
 
-    color: #44555a;
+    color: var(--text-secondary);
 
-    font-size: 12px;
-
-    line-height: 1.4;
+    font-size: 14px;
 }
 
-.logs li::before {
-    content: "";
 
-    position: absolute;
+.log-indicator {
 
-    left: 13px;
-    top: 16px;
+    width: 8px;
 
-    width: 6px;
-    height: 6px;
+    height: 8px;
+
+    flex: 0 0 8px;
 
     border-radius: 50%;
 
     background: var(--primary);
 }
 
-/* =========================
-   FOOTER
-========================= */
 
-.app-footer {
-    text-align: center;
+.log-message {
 
-    margin-top: 20px;
+    flex: 1;
 
-    color: #8a969a;
+    min-width: 0;
+}
+
+
+.log-time {
+
+    flex: 0 0 auto;
+
+    color: #91a0a8;
 
     font-size: 11px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
 
-@media (max-width: 800px) {
+/* ==================================================
+   FOOTER
+================================================== */
 
-    .auth-card {
-        grid-template-columns: 1fr;
-    }
+.app-footer {
 
-    .qr-section {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-    }
+    flex: 0 0 35px;
 
-    .log-section {
-        min-height: 400px;
-    }
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    color: #78909c;
+
+    font-size: 11px;
 }
 
-@media (max-width: 480px) {
+
+.server-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.server-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+}
+
+
+/* ==================================================
+   ANIMATION
+================================================== */
+
+@keyframes pulse {
+
+    0% {
+
+        box-shadow:
+            0 0 0 0
+            rgba(25, 200, 117, .35);
+
+    }
+
+    70% {
+
+        box-shadow:
+            0 0 0 7px
+            rgba(25, 200, 117, 0);
+
+    }
+
+    100% {
+
+        box-shadow:
+            0 0 0 0
+            rgba(25, 200, 117, 0);
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 1000px) {
+
+    html,
+    body {
+
+        overflow: auto;
+
+    }
+
+
+    #app {
+
+        height: auto;
+
+        min-height: calc(100vh - 24px);
+
+    }
+
+
+    .auth-card {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .authentication-section {
+
+        border-right: none;
+
+        border-bottom: 1px solid var(--border);
+
+    }
+
+
+    .activity-section {
+
+        min-height: 500px;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
 
     body {
-        padding: 20px 12px;
+
+        padding: 10px;
+
     }
 
-    .qr-section,
-    .log-section {
-        padding: 28px 22px;
+
+    .authentication-section,
+    .activity-section {
+
+        padding: 30px 20px;
+
     }
+
 
     .qr-wrapper {
-        width: 240px;
-        height: 240px;
+
+        width: min(300px, 80vw);
+
     }
 
-    .brand-text h1 {
-        font-size: 20px;
+
+    .instructions {
+
+        grid-template-columns: 1fr;
+
     }
 
-    .qr-section h2 {
-        font-size: 21px;
+
+    .activity-header {
+
+        flex-direction: column;
+
     }
+
+
+    .activity-title h2 {
+
+        font-size: 23px;
+
+    }
+
+
+    .app-footer {
+
+        padding: 0 10px;
+
+    }
+
 }
