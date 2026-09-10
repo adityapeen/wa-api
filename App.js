@@ -6,6 +6,7 @@ const socketIO = require('socket.io');
 const qrcode_t = require('qrcode-terminal');
 const qrcode = require('qrcode');
 const http = require('http');
+const path = require('path');
 const fileUpload = require('express-fileupload');
 const port = parseInt(process.env.PORT, 10) | 5000
 const fs = require('fs');
@@ -28,10 +29,20 @@ app.use(express.urlencoded({extended:true}));
 app.use(fileUpload({
     debug:false
 }));
+app.use(express.static(
+        path.join(__dirname, 'public')
+    ));
 app.use(httpLogger);
 
 app.get('/', (req, res)=> {
-    res.sendFile('index.html', {root: __dirname});
+    res.sendFile(
+        path.join(
+            __dirname,
+            'public',
+            'views',
+            'index.html'
+        )
+    );
 });
 
 const wwebVersion = '2.2412.54';

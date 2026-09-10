@@ -1,0 +1,481 @@
+:root {
+    --primary: #25d366;
+    --primary-dark: #128c7e;
+    --text: #172b2f;
+    --muted: #667781;
+    --border: #e8edef;
+    --background: #f0f2f5;
+    --card: #ffffff;
+    --log-bg: #f7f9fa;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(37, 211, 102, 0.14),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #eef7f2 0%,
+            #f5f7f8 50%,
+            #edf4f1 100%
+        );
+
+    color: var(--text);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 20px;
+}
+
+/* =========================
+   APP
+========================= */
+
+#app {
+    width: 100%;
+    max-width: 980px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.app-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 25px;
+
+    box-shadow:
+        0 8px 20px rgba(37, 211, 102, 0.22);
+}
+
+.brand-text {
+    text-align: left;
+}
+
+.brand-text h1 {
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.brand-text p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.auth-card {
+    background: var(--card);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 60px rgba(20, 40, 30, 0.10),
+        0 4px 12px rgba(20, 40, 30, 0.04);
+
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* =========================
+   QR SECTION
+========================= */
+
+.qr-section {
+    padding: 45px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-right: 1px solid var(--border);
+}
+
+.section-label {
+    color: var(--primary-dark);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+
+    margin-bottom: 8px;
+}
+
+.qr-section h2 {
+    font-size: 25px;
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+    text-align: center;
+}
+
+.qr-description {
+    color: var(--muted);
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    text-align: center;
+
+    max-width: 330px;
+
+    margin-bottom: 25px;
+}
+
+/* =========================
+   QR CONTAINER
+========================= */
+
+.qr-wrapper {
+    width: 280px;
+    height: 280px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.05);
+}
+
+#qrcode {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    image-rendering: pixelated;
+
+    border-radius: 8px;
+}
+
+.qr-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-top: 18px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #f0ad4e;
+
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(240, 173, 78, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0);
+    }
+}
+
+/* =========================
+   INSTRUCTIONS
+========================= */
+
+.instructions {
+    width: 100%;
+
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid var(--border);
+}
+
+.instructions h3 {
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+.step {
+    display: flex;
+    gap: 12px;
+
+    margin-bottom: 12px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.step-number {
+    flex: 0 0 24px;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: #e8f8ef;
+
+    color: var(--primary-dark);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* =========================
+   LOG SECTION
+========================= */
+
+.log-section {
+    padding: 45px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.log-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    margin-bottom: 22px;
+}
+
+.log-title h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.log-title p {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.connection-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    background: #fff7e6;
+
+    color: #a86b00;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.connection-badge::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #f0ad4e;
+}
+
+/* =========================
+   LOG BOX
+========================= */
+
+.logs-container {
+    flex: 1;
+
+    min-height: 330px;
+
+    background: var(--log-bg);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 18px;
+
+    overflow-y: auto;
+}
+
+.logs {
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.logs li {
+    position: relative;
+
+    padding: 11px 13px 11px 31px;
+
+    background: white;
+
+    border: 1px solid #edf0f1;
+
+    border-radius: 9px;
+
+    color: #44555a;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+}
+
+.logs li::before {
+    content: "";
+
+    position: absolute;
+
+    left: 13px;
+    top: 16px;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.app-footer {
+    text-align: center;
+
+    margin-top: 20px;
+
+    color: #8a969a;
+
+    font-size: 11px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .auth-card {
+        grid-template-columns: 1fr;
+    }
+
+    .qr-section {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .log-section {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    .qr-section,
+    .log-section {
+        padding: 28px 22px;
+    }
+
+    .qr-wrapper {
+        width: 240px;
+        height: 240px;
+    }
+
+    .brand-text h1 {
+        font-size: 20px;
+    }
+
+    .qr-section h2 {
+        font-size: 21px;
+    }
+}

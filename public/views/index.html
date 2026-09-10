@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WhatsApp API — Authentication</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+</head>
+
+<body>
+
+    <div id="app">
+
+        <!-- HEADER -->
+        <header class="app-header">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    <span>☎</span>
+                </div>
+
+                <div class="brand-text">
+                    <h1>WhatsApp API</h1>
+
+                    <p>
+                        WhatsApp Web Authentication
+                    </p>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- AUTHENTICATION CARD -->
+        <main class="auth-card">
+
+            <!-- QR SECTION -->
+            <section class="qr-section">
+
+                <div class="section-label">
+                    Authentication
+                </div>
+
+                <h2>
+                    Connect WhatsApp
+                </h2>
+
+                <p class="qr-description">
+                    Pindai kode QR menggunakan WhatsApp di perangkat seluler Anda untuk mengautentikasi sesi ini.
+                </p>
+
+
+                <div class="qr-wrapper">
+
+                    <img
+                        src="/images/qrcode.png"
+                        alt="WhatsApp QR Code"
+                        id="qrcode"
+                    >
+
+                </div>
+
+
+                <div class="qr-status">
+
+                    <span class="status-dot"></span>
+
+                    <span id="status-text">
+                        Waiting for authentication
+                    </span>
+
+                </div>
+
+
+                <!-- INSTRUCTIONS -->
+                <div class="instructions">
+
+                    <h3>
+                        Cara terhubung
+                    </h3>
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            1
+                        </span>
+
+                        <span>
+                            Buka WhatsApp di ponsel Anda.
+                        </span>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            2
+                        </span>
+
+                        <span>
+                            Buka <strong>Perangkat Tertaut</strong>.
+                        </span>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            3
+                        </span>
+
+                        <span>
+                            Pilih <strong>Hubungkan Perangkat</strong>
+                            dan pindai kode QR ini.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOG SECTION -->
+            <section class="log-section">
+
+                <div class="log-header">
+
+                    <div class="log-title">
+
+                        <h2>
+                            Aktivitas Koneksi
+                        </h2>
+
+                        <p>
+                            Real-time WhatsApp client status
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="connection-badge"
+                        id="connection-badge"
+                    >
+                        Connecting
+                    </div>
+
+                </div>
+
+
+                <div class="logs-container">
+
+                    <ul class="logs"></ul>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <footer class="app-footer">
+
+            WhatsApp API Authentication Portal
+
+        </footer>
+
+    </div>
+
+
+    <!-- JAVASCRIPT DEPENDENCIES -->
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+    </script>
+
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"
+        integrity="sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+    </script>
+
+
+    <!-- APPLICATION SCRIPT -->
+
+    <script>
+
+        $(document).ready(function () {
+
+            const socket = io.connect();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | DOM
+            |--------------------------------------------------------------------------
+            */
+
+            const $logs = $('.logs');
+            const $logsContainer = $('.logs-container');
+            const $qrCode = $('#qrcode');
+
+            const $statusText = $('#status-text');
+            const $connectionBadge = $('#connection-badge');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Add Log
+            |--------------------------------------------------------------------------
+            */
+
+            function addLog(message) {
+
+                $logs.append(
+                    $('<li>').text(message)
+                );
+
+                $logsContainer.scrollTop(
+                    $logsContainer[0].scrollHeight
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Connection Status
+            |--------------------------------------------------------------------------
+            */
+
+            function updateConnectionStatus(message) {
+
+                const text = message.toLowerCase();
+
+
+                if (text.includes('ready')) {
+
+                    $connectionBadge
+                        .text('Connected')
+                        .css({
+                            background: '#e8f8ef',
+                            color: '#128c7e'
+                        });
+
+
+                    $statusText.text(
+                        'WhatsApp connected successfully'
+                    );
+
+
+                    $('.status-dot').css({
+                        background: '#25d366',
+                        animation: 'none'
+                    });
+
+                    return;
+                }
+
+
+                if (text.includes('connecting')) {
+
+                    $connectionBadge.text(
+                        'Connecting'
+                    );
+
+                    $statusText.text(
+                        'Connecting to WhatsApp...'
+                    );
+
+                    return;
+                }
+
+
+                if (text.includes('qr')) {
+
+                    $connectionBadge.text(
+                        'Waiting for scan'
+                    );
+
+                    $statusText.text(
+                        'Scan the QR code with WhatsApp'
+                    );
+
+                }
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Socket.IO Message
+            |--------------------------------------------------------------------------
+            */
+
+            socket.on('message', function (msg) {
+
+                console.log(msg);
+
+                addLog(msg);
+
+                updateConnectionStatus(msg);
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Socket.IO QR Code
+            |--------------------------------------------------------------------------
+            */
+
+            socket.on('qr', function (src) {
+
+                console.log('QR Code Received');
+
+                $qrCode.attr('src', src);
+
+                $connectionBadge.text(
+                    'Waiting for scan'
+                );
+
+                $statusText.text(
+                    'Scan the QR code with WhatsApp'
+                );
+
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>
